@@ -20,3 +20,15 @@ class Requisition:
 
         Requisition.requisitions.append(self)
 
+    def add_requisition(self, items):
+
+
+    #tis is for adding and totalling
+        if not items:
+            raise ValueError("Please enter items.")
+
+        self.items = items
+
+        self.total = sum(items.values())
+
+        return self.total
