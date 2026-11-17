@@ -1,0 +1,22 @@
+
+requisition_counter = 1000
+class Requisition:
+    requisitions = []
+
+    def __init__(self, date, staff_id, staff_name):
+
+        #Adding req.
+        global requisition_counter
+        requisition_counter += 1
+
+        self.date = date
+        self.staff_id = staff_id
+        self.staff_name = staff_name
+        self.requisition_id = requisition_counter
+        self.total = 0
+        self.items = {}
+        self.status = "Pending"
+        self.approval_reference = "Not available"
+
+        Requisition.requisitions.append(self)
+
