@@ -23,12 +23,18 @@ class Requisition:
     def add_requisition(self, items):
 
 
-    #tis is for adding and totalling
-        if not items:
-            raise ValueError("Please enter items.")
+    def add_requisition(self, items):
+        if not isinstance(items, dict) or not items:
+            raise ValueError("Please enter valid items.")
 
-        self.items = items
+        for item, cost in items.items():
 
+            if not isinstance(item, str) or not item.strip():
+                raise ValueError("Invalid item name.")
+
+            if not isinstance(cost, (int, float)) or isinstance(cost, bool) or cost <= 0:
+                raise ValueError("Invalid item cost.")
+        self.items = items.copy()
         self.total = sum(items.values())
 
         return self.total
