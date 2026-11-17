@@ -38,3 +38,15 @@ class Requisition:
         self.total = sum(items.values())
 
         return self.total
+
+def approve_requisition(self):
+
+    if self.total < 500:
+
+        self.status = "Approved"
+
+    else:
+
+        self.status = "Pending"
+
+    return self.status
