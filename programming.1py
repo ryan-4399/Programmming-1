@@ -1,11 +1,14 @@
 
 requisition_counter = 1000
+
+
 class Requisition:
+
     requisitions = []
 
     def __init__(self, date, staff_id, staff_name):
 
-        #Adding req.
+        # Adding req.
         global requisition_counter
         requisition_counter += 1
 
@@ -20,10 +23,9 @@ class Requisition:
 
         Requisition.requisitions.append(self)
 
+    # 5. ADD REQUISITION METHOD
     def add_requisition(self, items):
 
-
-    def add_requisition(self, items):
         if not isinstance(items, dict) or not items:
             raise ValueError("Please enter valid items.")
 
@@ -32,34 +34,42 @@ class Requisition:
             if not isinstance(item, str) or not item.strip():
                 raise ValueError("Invalid item name.")
 
-            if not isinstance(cost, (int, float)) or isinstance(cost, bool) or cost <= 0:
+            if (not isinstance(cost, (int, float))
+                    or isinstance(cost, bool) or cost <= 0):
                 raise ValueError("Invalid item cost.")
+
         self.items = items.copy()
         self.total = sum(items.values())
 
+        # Check approval status
+        self.approve_requisition()
+
         return self.total
- def approve_requisition(self):
-    if self.total < 500:
-        self.status = "Approved"
 
-        self.approval_reference = (
-            str(self.staff_id) + str(self.requisition_id)[-3:]
-        )
+    # 6. APPROVE REQUISITION METHOD
+    def approve_requisition(self):
 
-    else:
+        if self.total < 500:
+            self.status = "Approved"
 
-        self.status = "Pending"
-        self.approval_reference = "Not available"
+            self.approval_reference = (
+                str(self.staff_id) + str(self.requisition_id)[-3:]
+            )
 
-    return self.status
+        else:
+            self.status = "Pending"
+            self.approval_reference = "Not available"
 
+        return self.status
 
-
+    # 7. RESPOND TO REQUISITION METHOD
     def respond_requisition(self, decision):
-#this code decision and approval.
+
+        # Check if requisition is pending
         if self.status != "Pending":
             print("Requisition is not pending.")
             return False
+
         if decision == "Approved":
 
             self.status = "Approved"
@@ -71,7 +81,24 @@ class Requisition:
 
             self.status = "Not approved"
             self.approval_reference = "Not available"
+
         else:
             print("Invalid decision.")
             return False
+
         return True
+
+    @classmethod
+    def display_requisitions(cls):
+
+        if not cls.requisitions:
+            print("No requisitions submitted.")
+            return
+        for requisition in cls.requisitions:
+            print("\nDate:", requisition.date)
+            print("Staff ID:", requisition.staff_id)
+            print("Staff Name:", requisition.staff_name)
+            print("Requisition ID:", requisition.requisition_id)
+            print("Total: $", requisition.total)
+            print("Status:", requisition.status)
+            print("Approval Reference Number:", requisition.approval_reference)
