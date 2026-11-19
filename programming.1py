@@ -1,14 +1,10 @@
-
-requisition_counter = 1000
-
-
+requisition_counter = 10000
 class Requisition:
 
     requisitions = []
 
     def __init__(self, date, staff_id, staff_name):
 
-        # Adding req.
         global requisition_counter
         requisition_counter += 1
 
@@ -23,33 +19,31 @@ class Requisition:
 
         Requisition.requisitions.append(self)
 
-    # 5. ADD REQUISITION METHOD
     def add_requisition(self, items):
 
         if not isinstance(items, dict) or not items:
-            raise ValueError("Please enter valid items.")
+            raise ValueError("Please enter valid requisition items.")
 
         for item, cost in items.items():
 
             if not isinstance(item, str) or not item.strip():
                 raise ValueError("Invalid item name.")
 
-            if (not isinstance(cost, (int, float))
-                    or isinstance(cost, bool) or cost <= 0):
+            if (isinstance(cost, bool)
+                    or not isinstance(cost, (int, float))
+                    or cost <= 0):
                 raise ValueError("Invalid item cost.")
 
         self.items = items.copy()
         self.total = sum(items.values())
-
-        # Check approval status
         self.approve_requisition()
 
         return self.total
 
-    # 6. APPROVE REQUISITION METHOD
     def approve_requisition(self):
 
         if self.total < 500:
+
             self.status = "Approved"
 
             self.approval_reference = (
@@ -57,36 +51,44 @@ class Requisition:
             )
 
         else:
+
             self.status = "Pending"
             self.approval_reference = "Not available"
 
         return self.status
 
-    # 7. RESPOND TO REQUISITION METHOD
     def respond_requisition(self, decision):
 
-        # Check if requisition is pending
         if self.status != "Pending":
-            print("Requisition is not pending.")
+            print("This requisition is not pending.")
             return False
 
-        if decision == "Approved":
+        if not isinstance(decision, str):
+            print("Invalid decision.")
+            return False
+
+        decision = decision.strip().lower()
+
+        if decision == "approved":
 
             self.status = "Approved"
+
             self.approval_reference = (
                 str(self.staff_id) + str(self.requisition_id)[-3:]
             )
 
-        elif decision == "Not approved":
+            return True
+
+        elif decision == "not approved":
 
             self.status = "Not approved"
             self.approval_reference = "Not available"
 
+            return True
+
         else:
             print("Invalid decision.")
             return False
-
-        return True
 
     @classmethod
     def display_requisitions(cls):
@@ -94,22 +96,26 @@ class Requisition:
         if not cls.requisitions:
             print("No requisitions submitted.")
             return
+
         for requisition in cls.requisitions:
+
             print("\nDate:", requisition.date)
+            print("Requisition ID:", requisition.requisition_id)
             print("Staff ID:", requisition.staff_id)
             print("Staff Name:", requisition.staff_name)
-            print("Requisition ID:", requisition.requisition_id)
-            print("Total: $", requisition.total)
+            print(f"Total: ${requisition.total}")
             print("Status:", requisition.status)
             print("Approval Reference Number:", requisition.approval_reference)
 
     @classmethod
     def requisition_statistics(cls):
+
         total_requisitions = len(cls.requisitions)
 
         approved = 0
         pending = 0
         not_approved = 0
+
         for requisition in cls.requisitions:
 
             if requisition.status == "Approved":
@@ -130,4 +136,26 @@ class Requisition:
 
         for key, value in statistics.items():
             print(key + ":", value)
+
         return statistics
+
+        req1 = Requisition("19/11/2026", "FN19", "John Paul")
+req1.add_requisition({"Keyboard": 100, "Mouse": 50, "Monitor": 100})
+
+req2 = Requisition("19/11/2026", "FN20", "Tracy Brown")
+req2.add_requisition({"Laptop": 800, "Keyboard": 200})
+
+req3 = Requisition("19/11/2026", "FN15", "Emma Wellington")
+req3.add_requisition({"Computer": 2500, "Printer": 1000})
+
+req4 = Requisition("19/11/2026", "FN02", "Catlin White")
+req4.add_requisition({"Headphones": 290, "Mouse": 200})
+
+req5 = Requisition("19/11/2026", "FN10", "David Smith")
+req5.add_requisition({"Desk": 400, "Chair": 200})
+
+req2.respond_requisition("Approved")
+req3.respond_requisition("Not approved")
+
+Requisition.display_requisitions()
+Requisition.requisition_statistics()
