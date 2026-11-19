@@ -1,4 +1,7 @@
+
 requisition_counter = 10000
+
+
 class Requisition:
 
     requisitions = []
@@ -17,9 +20,10 @@ class Requisition:
         self.status = "Pending"
         self.approval_reference = "Not available"
 
-        Requisition.requisitions.append(self)
-
     def add_requisition(self, items):
+
+        if self.items:
+            raise ValueError("Requisition items already submitted.")
 
         if not isinstance(items, dict) or not items:
             raise ValueError("Please enter valid requisition items.")
@@ -38,20 +42,19 @@ class Requisition:
         self.total = sum(items.values())
         self.approve_requisition()
 
+        Requisition.requisitions.append(self)
+
         return self.total
+
+    def generate_approval_reference(self):
+        return str(self.staff_id) + str(self.requisition_id)[-3:]
 
     def approve_requisition(self):
 
         if self.total < 500:
-
             self.status = "Approved"
-
-            self.approval_reference = (
-                str(self.staff_id) + str(self.requisition_id)[-3:]
-            )
-
+            self.approval_reference = self.generate_approval_reference()
         else:
-
             self.status = "Pending"
             self.approval_reference = "Not available"
 
@@ -70,20 +73,13 @@ class Requisition:
         decision = decision.strip().lower()
 
         if decision == "approved":
-
             self.status = "Approved"
-
-            self.approval_reference = (
-                str(self.staff_id) + str(self.requisition_id)[-3:]
-            )
-
+            self.approval_reference = self.generate_approval_reference()
             return True
 
         elif decision == "not approved":
-
             self.status = "Not approved"
             self.approval_reference = "Not available"
-
             return True
 
         else:
@@ -120,10 +116,8 @@ class Requisition:
 
             if requisition.status == "Approved":
                 approved += 1
-
             elif requisition.status == "Pending":
                 pending += 1
-
             elif requisition.status == "Not approved":
                 not_approved += 1
 
@@ -134,12 +128,15 @@ class Requisition:
             "Not approved requisitions": not_approved
         }
 
-        for key, value in statistics.items():
-            print(key + ":", value)
+        print("\nRequisition Statistics")
+        print("The total number of requisitions submitted:", total_requisitions)
+        print("The total number of approved requisitions:", approved)
+        print("The total number of pending requisitions:", pending)
+        print("The total number of not approved requisitions:", not_approved)
 
         return statistics
 
-        req1 = Requisition("19/11/2026", "FN19", "John Paul")
+req1 = Requisition("19/11/2026", "FN19", "John Paul")
 req1.add_requisition({"Keyboard": 100, "Mouse": 50, "Monitor": 100})
 
 req2 = Requisition("19/11/2026", "FN20", "Tracy Brown")
@@ -154,8 +151,14 @@ req4.add_requisition({"Headphones": 290, "Mouse": 200})
 req5 = Requisition("19/11/2026", "FN10", "David Smith")
 req5.add_requisition({"Desk": 400, "Chair": 200})
 
+
+Requisition.display_requisitions()
+Requisition.requisition_statistics()
+
+
 req2.respond_requisition("Approved")
 req3.respond_requisition("Not approved")
+
 
 Requisition.display_requisitions()
 Requisition.requisition_statistics()
