@@ -102,3 +102,32 @@ class Requisition:
             print("Total: $", requisition.total)
             print("Status:", requisition.status)
             print("Approval Reference Number:", requisition.approval_reference)
+
+    @classmethod
+    def requisition_statistics(cls):
+        total_requisitions = len(cls.requisitions)
+
+        approved = 0
+        pending = 0
+        not_approved = 0
+        for requisition in cls.requisitions:
+
+            if requisition.status == "Approved":
+                approved += 1
+
+            elif requisition.status == "Pending":
+                pending += 1
+
+            elif requisition.status == "Not approved":
+                not_approved += 1
+
+        statistics = {
+            "Total requisitions": total_requisitions,
+            "Approved requisitions": approved,
+            "Pending requisitions": pending,
+            "Not approved requisitions": not_approved
+        }
+
+        for key, value in statistics.items():
+            print(key + ":", value)
+        return statistics
